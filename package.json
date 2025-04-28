@@ -1,5 +1,12 @@
 {
   "name": "random-image-server",
   "version": "1.0.0",
-  "private": true
+  "description": "Random image server on Render",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
