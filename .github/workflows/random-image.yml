@@ -1,0 +1,35 @@
+name: Update Random Image Every 5 minutes
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # 5分ごとに実行
+  workflow_dispatch:  # 手動トリガーもできるようにする
+
+jobs:
+  update-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pick a random image
+        id: pick
+        run: |
+          # private-images フォルダ内の画像をランダムに選ぶ
+          files=($(ls private-images/*.png))
+          RANDOM_FILE=${files[$RANDOM % ${#files[@]}]}
+          echo "Selected file: $RANDOM_FILE"
+          
+          # public/random.png にコピーして上書き
+          cp "$RANDOM_FILE" public/random.png
+          
+          # 環境変数に画像ファイル名を保存（後のステップで使う）
+          echo "file=$RANDOM_FILE" >> $GITHUB_ENV
+
+      - name: Commit and push to gh-pages branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/random.png
+          git commit -m "Update random image: ${{ env.file }}" || echo "No changes to commit"
+          git push https://github-actions:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} gh-pages
