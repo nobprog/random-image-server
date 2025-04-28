@@ -5,8 +5,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ランダム画像API
-app.get('/', (req, res) => {
+// path
+app.get('/random.png', (req, res) => {
   const imagesDir = path.join(__dirname, 'private-images');
   const files = fs.readdirSync(imagesDir);
   const randomFile = files[Math.floor(Math.random() * files.length)];
